@@ -10,17 +10,19 @@ def configCheck():
 def label():
     capture = cv2.VideoCapture('videos/' + cfg.videoName)
     i = 0
+    timestamp = 0.0
  
     while (True):
  
         success, frame = capture.read()
  
         if success:
-            cv2.imwrite(cfg.outputPath + str(i) + ".jpg", frame)
+            cv2.imwrite(cfg.outputPath + "{:.2f}.jpg".format(timestamp), frame)
             print(i)
         else:
             break
- 
+        
+        timestamp = timestamp + 0.04
         i = i+1
  
     capture.release()
