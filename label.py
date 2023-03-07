@@ -5,6 +5,7 @@ import cv2
 import math
 import os
 import sys
+import csv
 
 def configCheck():
     print("--- Checking and running configuration from config.py ---")
@@ -41,29 +42,36 @@ def configCheck():
 
 def label():
     capture = cv2.VideoCapture('videos/' + cfg.videoName)
+    annotations = open('annotations/' + cfg.fileName)
+    annotations = csv.reader(annotations, delimiter=',')
+
+            
     i = 0
     timestamp = 0.0
- 
-    while (True):
- 
-        success, frame = capture.read()
- 
-        if success:
-            cv2.imwrite(cfg.outputPath + "{:02d}_{:02d}.jpg".format(math.floor(timestamp), math.floor(timestamp % 1 * 100)), frame)
-        else:
-            break
-        
-        timestamp = timestamp + 0.0667
-        if(math.floor(timestamp) == i): 
-            i = i+1
-            print("{:.1f} Seconds Converted".format(timestamp))
- 
-    capture.release()
-    return
+    
+    for row in annotations:
+        while (True):
+    
+            success, frame = capture.read()
+    
+            if success:
+                if(timestamp <= float(row[1])):
+                    cv2.imwrite(cfg.outputPath + row[2] + "/{:02d}_{:02d}.jpg".format(math.floor(timestamp), math.floor(timestamp % 1 * 100)), frame)
+                else:
+                    break
+            else:
+                capture.release()
+                return
+            
+            timestamp = timestamp + 0.0667
+            if(math.floor(timestamp) == i): 
+                i = i+1
+                print("{:.1f} Seconds Converted".format(timestamp))
+    
 
 if __name__ == '__main__':
-    #if configCheck():
-    label()
-     #   print("Labeling complete. Output images with labels can be found at: ", cfg.outputPath)
-   # else:
-    #    print("Config file not complete. Please give all variables a value in config.py.")
+    if configCheck():
+        label()
+        print("Labeling complete. Output images with labels can be found at: ", cfg.outputPath)
+    else:
+        print("Config file not complete. Please give all variables a value in config.py.")
