@@ -43,7 +43,7 @@ def configCheck():
 def label():
     capture = cv2.VideoCapture('videos/' + cfg.videoName)
     annotations = open('annotations/' + cfg.fileName)
-    annotations = csv.reader(annotations, delimiter=',')
+    annotations = csv.reader(annotations, delimiter=cfg.delimiter)
 
             
     i = 0
